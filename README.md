@@ -1,2 +1,2 @@
 # Vaani.AI
-Tamil recognisable AI software 
+idhu dha first Tamil recognisable AI assistant software 
