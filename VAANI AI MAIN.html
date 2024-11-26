@@ -1,0 +1,358 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>வாணி.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&family=Roboto:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <style>
+        body {
+            font-family: 'Noto Sans Tamil', sans-serif;
+        }
+        .mic-btn {
+            position: relative;
+            width: 100px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .mic-btn:hover {
+            transform: scale(1.1);
+        }
+        .mic-btn .red-dot {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+            display: none;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .btn {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            height: 1.5cm; /* Set height to 1.5cm */
+        }
+        .btn:hover {
+            background-color: #5a67d8;
+            transform: scale(1.05);
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-in-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-gray-900 via-purple-900 to-black flex flex-col items-center justify-center min-h-screen">
+    <div class="absolute top-4 left-4 bg-gradient-to-r from-purple-700 to-purple-900 text-white text-xl font-bold px-4 py-2 rounded-lg shadow-lg text-center w-[30rem] fade-in">
+        சமீபத்திய பரிவர்த்தனைகள்<br>
+        Recent Transactions
+        <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg slide-in">
+            கடன் தவணை: ₹10,000 - அக்டோபர் 15 அன்று பிடிக்கப்பட்டது.<br>
+            Loan EMI: ₹10,000 - Debited on October 15.
+        </div>
+        <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg slide-in">
+            மொபைல் ரீசார்ஜ்: ₹399 - அக்டோபர் 22 அன்று செலுத்தப்பட்டது.<br>
+            Mobile Recharge: ₹399 - Paid on October 22.
+        </div>
+    </div>
+    <div class="absolute top-4 left-1/2 transform -translate-x-1/2 text-center text-white text-3xl font-bold fade-in">
+        நிதி சீர்செய்ய, வாழ்க்கை சீராக!
+        <div class="text-3xl font-black" style="font-family: 'Roboto', sans-serif;">
+            Finance aligned, life refined!
+        </div>
+    </div>
+    <div id="account-balance" class="absolute top-4 right-4 bg-gradient-to-r from-purple-700 to-purple-900 text-white text-xl font-bold px-4 py-2 rounded-lg shadow-lg fade-in">
+        Account Balance: ₹4,70,000
+    </div>
+    <div class="absolute top-20 right-4 bg-gradient-to-r from-purple-700 to-purple-900 text-white text-xl font-bold px-4 py-2 rounded-lg shadow-lg w-[30rem] max-h-[40rem] overflow-y-scroll fade-in">
+        செலவுகள்
+        <div id="task-list">
+            <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg flex items-center relative slide-in">
+                <input type="checkbox" id="task-checkbox-lic" class="mr-2 w-5 h-5" data-amount="8000">
+                <label for="task-checkbox-lic">
+                    எல்ஐசி (LIC) தவணை: ₹8,000 - நவம்பர் 23<br>
+                    LIC premium:
+                </label>
+                <div class="absolute bottom-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    இன்று
+                </div>
+            </div>
+            <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg flex items-center slide-in">
+                <input type="checkbox" id="task-checkbox-loan" class="mr-2 w-5 h-5" data-amount="12500">
+                <label for="task-checkbox-loan">
+                    கடன் தவணை: ₹12,500 - நவம்பர் 30 அன்று செலுத்த வேண்டும்.<br>
+                    Loan EMI:
+                </label>
+            </div>
+            <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg flex items-center slide-in">
+                <input type="checkbox" id="task-checkbox-tax" class="mr-2 w-5 h-5" data-amount="0">
+                <label for="task-checkbox-tax">
+                    வருமான வரி தாக்கல் செய்ய: டிசம்பர் 31 இறுதிநாள்.<br>
+                    Income tax filing:
+                </label>
+            </div>
+            <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg flex items-center slide-in">
+                <input type="checkbox" id="task-checkbox-school" class="mr-2 w-5 h-5" data-amount="15000">
+                <label for="task-checkbox-school">
+                    மகனின் பள்ளி கட்டணத்திற்கு ₹15,000<br>
+                    Grandson’s school fees:
+                </label>
+            </div>
+            <div class="mt-2 text-lg font-normal bg-gray-800 p-4 rounded-lg flex items-center slide-in">
+                <input type="checkbox" id="task-checkbox-gold" class="mr-2 w-5 h-5" data-amount="2000">
+                <label for="task-checkbox-gold">
+                    தங்க நகை வாங்க வசதிக்கு ₹2,000 ஒதுக்கம்<br>
+                    Gold jewelry purchase savings:
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="relative bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md mt-16 fade-in">
+        <h1 class="text-3xl font-bold mb-6 text-center text-white">வாணி.AI</h1>
+        <div id="chat-box" class="bg-gray-800 p-4 rounded-lg h-64 overflow-y-auto mb-4"></div>
+        <div class="flex items-center mb-4">
+            <textarea id="text-input" class="flex-grow p-2 border rounded bg-gray-700 text-white" rows="1"></textarea>
+            <button id="send-btn" class="btn bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-800 ml-2">
+                Send
+            </button>
+        </div>
+        <div class="flex justify-center">
+            <button id="mic-btn" class="mic-btn bg-violet-600 text-white rounded hover:bg-violet-800">
+                <i class="fas fa-microphone"></i>
+                <div class="red-dot"></div>
+            </button>
+        </div>
+    </div>
+    <div class="absolute bottom-4 left-4 flex flex-col space-y-4">
+        <button id="investment-btn" class="btn bg-gradient-to-r from-purple-700 to-purple-900 text-white px-4 py-2 rounded-lg shadow-lg hover:from-purple-800 hover:to-purple-900 h-16">
+            உங்கள் பணத்தை முதலீடு செய்ய<br>இப்பொழுது கற்றுக்கொள்ளுங்கள்
+        </button>
+        <div class="flex space-x-4">
+            <div class="bg-gradient-to-r from-purple-700 to-purple-900 text-white text-lg font-bold px-4 py-2 rounded-lg shadow-lg fade-in w-64 h-40 flex flex-col items-center justify-center">
+                <div class="text-xl mb-4">ஸ்பாம் பாதுகாப்பு<br>Spam Detection</div>
+                <div class="flex space-x-4">
+                    <button id="call-attend-btn" class="btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="btn bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-purple-700 to-purple-900 text-white text-lg font-bold px-4 py-2 rounded-lg shadow-lg fade-in w-64 h-40 flex flex-col items-center justify-center overflow-y-scroll">
+                <div class="text-xl mb-2" style="margin-top: 1.5cm;">சமீபத்திய அழைப்புகள்<br>Recent Calls</div>
+                <div class="bg-gray-800 text-white text-lg font-normal px-4 py-2 rounded-lg flex items-center justify-between w-full mb-2">
+                    <span>9966332255</span>
+                    <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded cursor-pointer" onclick="this.innerText='Blocked'; this.classList.remove('bg-red-500'); this.classList.add('bg-green-500');">Likely to be Scam Block?</span>
+                </div>
+                <div class="bg-gray-800 text-white text-lg font-normal px-4 py-2 rounded-lg flex items-center justify-between w-full mb-2">
+                    <span>9513574561</span>
+                    <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Blocked</span>
+                </div>
+                <div class="bg-gray-800 text-white text-lg font-normal px-4 py-2 rounded-lg flex items-center justify-between w-full">
+                    <span>8564791235</span>
+                    <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Blocked</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sendBtn = document.getElementById("send-btn");
+        const textInput = document.getElementById("text-input");
+        const chatBox = document.getElementById("chat-box");
+        const micBtn = document.getElementById("mic-btn");
+        const redDot = micBtn.querySelector('.red-dot');
+        const callAttendBtn = document.getElementById("call-attend-btn");
+        const taskList = document.getElementById("task-list");
+        const accountBalanceElement = document.getElementById("account-balance");
+        const investmentBtn = document.getElementById("investment-btn");
+        let accountBalance = 470000;
+
+        sendBtn.addEventListener("click", sendMessage);
+        textInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            } else if (event.key === "Tab") {
+                event.preventDefault();
+                startRecording();
+            }
+        });
+
+        micBtn.addEventListener("click", startRecording);
+        document.addEventListener("keydown", (event) => {
+            if (event.code === "Space") {
+                event.preventDefault();
+                startRecording();
+            }
+        });
+
+        callAttendBtn.addEventListener("click", () => {
+            window.open('http://127.0.0.1:5500/Vaani.AI%20Call%20Diagnosis.html', '_blank');
+        });
+
+        investmentBtn.addEventListener("click", () => {
+            window.open('https://youtu.be/FBnlJXbOiY0?si=EPJGkYwTCWya7gLX', '_blank');
+        });
+
+        function startRecording() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'ta-IN'; // Set language to Tamil
+            recognition.start();
+            redDot.style.display = 'block'; // Show red dot
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                redDot.style.display = 'none'; // Hide red dot
+                if (transcript.includes("குரோம் ஓப்பன் பண்ணு")) {
+                    addMessage("user", transcript);
+                    window.open('https://www.google.com', '_blank');
+                } else if (transcript.includes("வாட்ஸ்அப் ஓப்பன் பண்ணு")) {
+                    addMessage("user", transcript);
+                    window.open('https://web.whatsapp.com', '_blank');
+                } else if (transcript.includes("யூடியூப் ல")) {
+                    const videoQuery = transcript.split("யூடியூப் ல")[1].trim();
+                    addMessage("user", transcript);
+                    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(videoQuery)}`, '_blank');
+                } else if (transcript.includes("தவணை") || transcript.includes("செலவுகள்") || transcript.includes("செலவு") || transcript.includes("தொகை")) {
+                    addTask(transcript);
+                    addMessage("bot", "புதிய பணியைச் சேர்க்கப்பட்டது");
+                } else {
+                    textInput.value = transcript;
+                    sendMessage(); // Automatically send the message after recording
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error", event);
+                redDot.style.display = 'none'; // Hide red dot
+            };
+
+            recognition.onend = () => {
+                redDot.style.display = 'none'; // Hide red dot
+            };
+        }
+
+        function sendMessage() {
+            const userMessage = textInput.value.trim();
+            if (userMessage) {
+                addMessage("user", userMessage);
+                addLoadingIndicator();
+                fetch("http://127.0.0.1:5000/chat", { // Ensure backend is running locally
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    removeLoadingIndicator();
+                    addMessage("bot", data.response);
+                })
+                .catch(err => {
+                    removeLoadingIndicator();
+                    addMessage("bot", "Error communicating with the server.");
+                });
+                textInput.value = ""; // Clear input box
+            }
+        }
+
+        function addMessage(sender, message) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("mb-2", "fade-in");
+            messageElement.innerHTML = `
+                <div class="${sender === "user" ? "text-right" : "text-left"}">
+                    <div class="inline-block px-4 py-2 rounded-lg ${sender === "user" ? "bg-violet-600 text-white" : "bg-gray-600 text-white"}">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to latest message
+        }
+
+        function addLoadingIndicator() {
+            const loadingIndicator = document.createElement("div");
+            loadingIndicator.id = "loading-indicator";
+            loadingIndicator.classList.add("text-left", "mb-2", "fade-in");
+            loadingIndicator.innerHTML = `
+                <div class="inline-block px-4 py-2 rounded-lg bg-gray-600 text-white">
+                    <div class="loading-spinner"></div>
+                </div>
+            `;
+            chatBox.appendChild(loadingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to latest message
+        }
+
+        function removeLoadingIndicator() {
+            const loadingIndicator = document.getElementById("loading-indicator");
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+        }
+
+        function addTask(task) {
+            const taskElement = document.createElement("div");
+            taskElement.classList.add("mt-2", "text-lg", "font-normal", "bg-gray-800", "p-4", "rounded-lg", "flex", "items-center", "slide-in");
+            taskElement.innerHTML = `
+                <input type="checkbox" class="mr-2 w-5 h-5" data-amount="0">
+                <label>${task}</label>
+            `;
+            taskList.appendChild(taskElement);
+            taskElement.querySelector("input[type='checkbox']").addEventListener("change", handleTaskCheckboxChange);
+        }
+
+        function handleTaskCheckboxChange(event) {
+            const amount = parseInt(event.target.getAttribute("data-amount"));
+            if (event.target.checked) {
+                accountBalance -= amount;
+            } else {
+                accountBalance += amount;
+            }
+            updateAccountBalance();
+        }
+
+        document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
+            checkbox.addEventListener("change", handleTaskCheckboxChange);
+        });
+
+        function updateAccountBalance() {
+            accountBalanceElement.textContent = `Account Balance: ₹${accountBalance.toLocaleString()}`;
+        }
+    </script>
+</body>
+</html>
